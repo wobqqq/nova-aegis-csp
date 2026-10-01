@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Artisan;
 use Wobqqq\Aegis\Aegis;
-use Wobqqq\Aegis\Settings\AegisSetting;
 use Wobqqq\AegisCsp\CspModule;
 
 use function Pest\Laravel\get;
@@ -32,14 +31,14 @@ it('stops sending the policy to Nova only', function (string $target, bool $enab
 ]);
 
 it('recovers from a stored row the rules would refuse', function (): void {
-    AegisSetting::query()->create(['section' => CspModule::KEY, 'values' => [
+    storeCsp([
         'enabled' => true,
         'apply_to' => 'nova',
         'report_uri' => 'bad uri',
         'nova_script_src' => sources('bad source', "'none'"),
         'site_object_src' => sources("'none'", "'self'"),
         'site_img_src' => sources(...array_map(static fn (int $i): string => "h{$i}.example.com", range(1, 60))),
-    ]]);
+    ]);
 
     expect(Artisan::call('aegis:csp:disable'))->toBe(0)
         ->and(Aegis::settings(CspModule::KEY))->toMatchArray(['enabled' => false, 'report_uri' => null])

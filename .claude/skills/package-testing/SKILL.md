@@ -16,7 +16,7 @@ license: MIT
 ## Rules
 
 - Test what the browser or the administrator sees: the exact header a route answers, the validation error of a row, the dashboard line, the exit code of a command.
-- Save through `saveCsp()` or the API. Write `AegisSetting` by hand only to test a stored row the rules would refuse.
+- Save through `saveCsp()` or the API. Write a row by hand with `storeCsp()` only to test a stored row the rules would refuse.
 - Every refused source is a dataset row in `Unit/SourceTest.php` **and**, for injection, a refused save in `Feature/SettingsTest.php`.
 - No test reaches the network. To make the settings unreadable, register a module under the `csp` key whose `defaults()` throws.
 - Coverage stays at 90 % or more (`make test.coverage`).

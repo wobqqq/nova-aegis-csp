@@ -45,11 +45,13 @@ Installing Nova needs a license: `auth.json` (gitignored and export-ignored) hol
 
 The core and the module are updated independently, so the module only uses what the core lists as public API (see the core's AGENTS.md):
 
-- `Aegis::module()`, `Aegis::check()`, `Aegis::settings('csp')`;
+- `Aegis::module()`, `Aegis::check()`, `Aegis::settings('csp')` and `Aegis::save('csp', …)` (the recovery command);
 - the `Module` and `Check` interfaces, `CheckResult`, `Status`, `Field` (`toggle`, `select`, `text`, `table`) and `FieldType`;
 - the `SettingsSaved` event, to forget the policy read in this process;
 - the `nova-vendor/aegis` routes and the `viewAegis` gate, which guard the settings page (the module adds no route of its own);
-- `Wobqqq\Aegis\Support\Values` to read stored values, and `SettingsRepository::save()` in the recovery command.
+- `Wobqqq\Aegis\Support\Values` to read stored values.
+
+Nothing else of the core (`SettingsRepository`, `AegisSetting`, the registries) is used from `src/`; an architecture test enforces it.
 
 A newer core API is used only behind a check (`method_exists`, `class_exists`) with a fallback, so the module keeps working with every core release of the same major. The section key `csp` and the setting keys are public too: never rename them.
 

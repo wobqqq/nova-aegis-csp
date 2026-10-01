@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use Wobqqq\Aegis\Settings\SettingsRepository;
+use Wobqqq\Aegis\Aegis;
+use Wobqqq\Aegis\Settings\AegisSetting;
 use Wobqqq\AegisCsp\CspModule;
 use Wobqqq\AegisCsp\Tests\Fixtures\User;
 use Wobqqq\AegisCsp\Tests\TestCase;
@@ -36,5 +37,15 @@ function sources(string ...$sources): array
  */
 function saveCsp(array $values): array
 {
-    return resolve(SettingsRepository::class)->save(CspModule::KEY, array_replace((new CspModule())->defaults(), $values));
+    return Aegis::save(CspModule::KEY, array_replace((new CspModule())->defaults(), $values));
+}
+
+/**
+ * Writes a CSP row straight into the core's table, past the rules, as an old release or a hand edit could leave it.
+ *
+ * @param array<string, mixed> $values
+ */
+function storeCsp(array $values): void
+{
+    AegisSetting::query()->create(['section' => CspModule::KEY, 'values' => $values]);
 }

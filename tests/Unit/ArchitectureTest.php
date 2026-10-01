@@ -28,6 +28,10 @@ arch('the module never queries the database itself')
     ->expect('Wobqqq\AegisCsp')
     ->not->toUse([Illuminate\Support\Facades\DB::class, Illuminate\Database\Eloquent\Model::class, Wobqqq\Aegis\Settings\AegisSetting::class]);
 
+arch('the module reaches the core only through its public API')
+    ->expect('Wobqqq\\AegisCsp')
+    ->not->toUse([Wobqqq\Aegis\Settings\SettingsRepository::class, 'Wobqqq\\Aegis\\Modules', Wobqqq\Aegis\Checks\CheckRegistry::class, Wobqqq\Aegis\Checks\CheckRunner::class]);
+
 arch('the module opens no network connection')
     ->expect(['stream_socket_client', 'fsockopen', 'curl_init', 'file_get_contents', Illuminate\Support\Facades\Http::class])
     ->not->toBeUsedIn('Wobqqq\AegisCsp');

@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 use Wobqqq\Aegis\Aegis;
 use Wobqqq\Aegis\Checks\CheckResult;
 use Wobqqq\Aegis\Contracts\Module;
-use Wobqqq\Aegis\Settings\AegisSetting;
 use Wobqqq\AegisCsp\CspModule;
 
 use function Pest\Laravel\get;
@@ -113,13 +112,13 @@ it('skips empty directives and sends nothing for an empty policy', function (): 
 });
 
 it('never sends a stored source the rules would refuse', function (): void {
-    AegisSetting::query()->create(['section' => CspModule::KEY, 'values' => [
+    storeCsp([
         'enabled' => true,
         'report_uri' => 'https://example.com/r; script-src *',
         'site_default_src' => sources("'self'; script-src *", "'self'", "https:\r\nX-Injected: 1", 'self'),
         'site_script_src' => 'not a list',
         'site_img_src' => [['source' => ['nested']], 'row', ['source' => 'data:']],
-    ]]);
+    ]);
 
     $policy = (string)get('/page')->headers->get('Content-Security-Policy');
 
@@ -129,13 +128,13 @@ it('never sends a stored source the rules would refuse', function (): void {
 });
 
 it('keeps what Nova needs in a stored Nova policy', function (): void {
-    AegisSetting::query()->create(['section' => CspModule::KEY, 'values' => [
+    storeCsp([
         'enabled' => true,
         'apply_to' => 'nova',
         'nova_script_src' => sources("'strict-dynamic'", "'sha256-B2yPHKaXnvFWtRChIbabYmUBFZdVfKKXHbWtWidDVF8='", 'https://cdn.example.com'),
         'nova_style_src' => sources("'none'"),
         'nova_connect_src' => [],
-    ]]);
+    ]);
 
     $policy = (string)get('/nova/page')->headers->get('Content-Security-Policy');
 
@@ -146,11 +145,11 @@ it('keeps what Nova needs in a stored Nova policy', function (): void {
 });
 
 it('falls back to a safe reading of a stored target and flags', function (): void {
-    AegisSetting::query()->create(['section' => CspModule::KEY, 'values' => [
+    storeCsp([
         'enabled' => 'yes',
         'apply_to' => 'everywhere',
         'report_only' => [],
-    ]]);
+    ]);
 
     get('/page')->assertHeader('Content-Security-Policy');
     get('/nova/page')->assertHeaderMissing('Content-Security-Policy');

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Wobqqq\Aegis\Checks\CheckRunner;
 use Wobqqq\Aegis\Enums\Status;
 use Wobqqq\AegisCsp\Checks\PolicyStrengthCheck;
 use Wobqqq\AegisCsp\CspModule;
@@ -68,8 +67,6 @@ it('passes a strict site policy', function (): void {
 it('runs with the core checks on the Aegis overview', function (): void {
     saveCsp(['enabled' => true]);
     actingAs(admin());
-
-    expect(collect(resolve(CheckRunner::class)->checks())->pluck('key'))->toContain(PolicyStrengthCheck::KEY);
 
     getJson('/nova-vendor/aegis/overview')->assertOk()
         ->assertJsonFragment(['key' => PolicyStrengthCheck::KEY])

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Illuminate\Validation\ValidationException;
 use Wobqqq\Aegis\Aegis;
 use Wobqqq\Aegis\Enums\FieldType;
-use Wobqqq\Aegis\Modules\ModuleRegistry;
 use Wobqqq\AegisCsp\CspModule;
 
 use function Pest\Laravel\actingAs;
@@ -13,8 +12,7 @@ use function Pest\Laravel\getJson;
 use function Pest\Laravel\putJson;
 
 it('registers its section with the core, off by default', function (): void {
-    expect(resolve(ModuleRegistry::class)->get(CspModule::KEY))->toBeInstanceOf(CspModule::class)
-        ->and(Aegis::settings(CspModule::KEY))->toMatchArray(['enabled' => false, 'report_only' => false, 'apply_to' => 'site'])
+    expect(Aegis::settings(CspModule::KEY))->toMatchArray(['enabled' => false, 'report_only' => false, 'apply_to' => 'site'])
         ->and(Aegis::settings(CspModule::KEY)['nova_script_src'])->toBe(sources("'self'", "'unsafe-inline'", "'unsafe-eval'"));
 });
 

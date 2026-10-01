@@ -17,7 +17,7 @@ Applications update the module and the Aegis core independently with Composer. E
 ## Constraints
 
 - `laravel/framework` and `laravel/nova` cover whole majors; supporting a new major is a minor release with both ranges and tests against both.
-- `wobqqq/nova-aegis` is `^1.0 || dev-main`. Raise the minimum only when the module needs a core API released later, and say so in the changelog.
+- `wobqqq/nova-aegis` is `^1.1 || dev-main`. Raise the minimum only when the module needs a core API released later, and say so in the changelog.
 - The `path` repository to `../nova-aegis` is for development; the lock file is development-only (export-ignored). Once the core is on Packagist, drop the path repository and `dev-main`.
 
 ## Stored settings
