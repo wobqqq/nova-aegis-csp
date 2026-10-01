@@ -4,6 +4,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-01
+
 ### Added
 
 - A **Content Security Policy** section in the Aegis settings: twelve directives for the site and twelve for Nova, edited as source lists, off until enabled.
@@ -13,3 +15,7 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - The header is set on every response of the `web` group, streamed and file responses included, and replaces a policy the response already has.
 - A dashboard line and the **Content Security Policy strength** check.
 - `aegis:csp:disable [--nova]` console command.
+- Requires Aegis 1.1 or later (`wobqqq/nova-aegis` `^1.1`): the module uses only the core's public API, `Aegis::save()` included.
+
+[Unreleased]: https://github.com/wobqqq/nova-aegis-csp/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/wobqqq/nova-aegis-csp/releases/tag/v1.0.0
