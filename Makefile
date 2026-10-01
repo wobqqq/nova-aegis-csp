@@ -6,7 +6,7 @@ export GID := $(shell id -g)
 PHP := docker compose run --rm php
 
 .PHONY: docker.build install update shell \
-	code.fix code.check code.stan test test.coverage test.mutate ready
+	code.fix code.check code.stan test test.coverage test.mutate test.nova ready
 
 # ─────────────────────────────── Docker ───────────────────────────────
 docker.build:
@@ -39,5 +39,9 @@ test.coverage:
 
 test.mutate:
 	$(PHP) composer test.mutate
+
+# Optional: the suite on the real laravel/nova; needs your Nova license in auth.json.
+test.nova:
+	./docker/test-nova.sh
 
 ready: code.fix code.check test.coverage

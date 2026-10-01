@@ -13,11 +13,11 @@ metadata:
 
 # Nova and this module
 
-The module has no Nova tool, page or Vue component of its own: the Aegis core draws its settings from `CspModule::fields()` and guards them with `viewAegis`. Check Nova's own source in `vendor/laravel/nova` before relying on a behaviour.
+The module has no Nova tool, page or Vue component of its own: the Aegis core draws its settings from `CspModule::fields()` and guards them with `viewAegis`. `vendor/laravel/nova` here is the test double in `stubs/nova`, not Nova: check a behaviour in a real Nova install before relying on it, and add any Nova API the module starts using to the double first (see `package-testing`).
 
 ## What Nova needs from a policy
 
-Read `vendor/laravel/nova/resources/views/layout.blade.php` and `public/` when Nova is upgraded:
+Read `resources/views/layout.blade.php` and `public/` of a real Nova install when Nova is upgraded (the double has neither):
 
 - an inline theme script and the inline `createNovaApp(config)` boot script: `script-src 'unsafe-inline'`;
 - the Vue template compiler used by tools (`new Function` in `vendor.js`): `script-src 'unsafe-eval'`;
