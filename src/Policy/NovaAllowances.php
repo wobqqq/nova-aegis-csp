@@ -13,7 +13,7 @@ use Wobqqq\AegisCsp\Enums\Directive;
  */
 final class NovaAllowances
 {
-    private const REQUIRED = [
+    private const array REQUIRED = [
         Directive::SCRIPT_SRC->value => [Source::SELF, Source::UNSAFE_INLINE, Source::UNSAFE_EVAL],
         Directive::STYLE_SRC->value => [Source::SELF, Source::UNSAFE_INLINE],
         Directive::IMG_SRC->value => [Source::SELF, 'data:'],

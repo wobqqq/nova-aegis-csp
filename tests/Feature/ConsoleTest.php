@@ -42,7 +42,7 @@ it('recovers from a stored row the rules would refuse', function (): void {
 
     expect(Artisan::call('aegis:csp:disable'))->toBe(0)
         ->and(Aegis::settings(CspModule::KEY))->toMatchArray(['enabled' => false, 'report_uri' => null])
-        ->and(Aegis::settings(CspModule::KEY)['site_img_src'])->toHaveCount(CspModule::MAX_SOURCES);
+        ->and(Aegis::settings(CspModule::KEY)['site_img_src'] ?? null)->toHaveCount(CspModule::MAX_SOURCES);
 
     get('/nova/page')->assertHeaderMissing('Content-Security-Policy');
 });

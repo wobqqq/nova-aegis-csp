@@ -7,6 +7,7 @@ namespace Wobqqq\AegisCsp;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Wobqqq\Aegis\Aegis;
 use Wobqqq\Aegis\Events\SettingsSaved;
 use Wobqqq\AegisCsp\Checks\PolicyStrengthCheck;
@@ -15,6 +16,7 @@ use Wobqqq\AegisCsp\Http\Middleware\ContentSecurityPolicy;
 
 final class CspServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this->app->singleton(CspService::class);

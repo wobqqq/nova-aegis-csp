@@ -10,19 +10,19 @@ namespace Wobqqq\AegisCsp\Policy;
  */
 final class Source
 {
-    public const MAX_LENGTH = 255;
+    public const int MAX_LENGTH = 255;
 
-    public const NONE = "'none'";
+    public const string NONE = "'none'";
 
-    public const SELF = "'self'";
+    public const string SELF = "'self'";
 
-    public const UNSAFE_INLINE = "'unsafe-inline'";
+    public const string UNSAFE_INLINE = "'unsafe-inline'";
 
-    public const UNSAFE_EVAL = "'unsafe-eval'";
+    public const string UNSAFE_EVAL = "'unsafe-eval'";
 
-    public const STRICT_DYNAMIC = "'strict-dynamic'";
+    public const string STRICT_DYNAMIC = "'strict-dynamic'";
 
-    private const KEYWORDS = [
+    private const array KEYWORDS = [
         self::SELF,
         self::NONE,
         self::UNSAFE_INLINE,
@@ -34,11 +34,11 @@ final class Source
         "'inline-speculation-rules'",
     ];
 
-    private const HASH = "/^'sha(?:256|384|512)-[A-Za-z0-9+\\/_-]+={0,2}'\\z/D";
+    private const string HASH = "/^'sha(?:256|384|512)-[A-Za-z0-9+\\/_-]+={0,2}'\\z/D";
 
-    private const SCHEME = '/^[a-z][a-z0-9+.\-]*:\z/D';
+    private const string SCHEME = '/^[a-z][a-z0-9+.\-]*:\z/D';
 
-    private const HOST = '#^(?:[a-z][a-z0-9+.\-]*://)?(?:\*|(?:\*\.)?[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?)*)(?::(?:[0-9]{1,5}|\*))?(?:/[A-Za-z0-9\-._~!$&()*+=:@%/]*)?\z#iD';
+    private const string HOST = '#^(?:[a-z][a-z0-9+.\-]*://)?(?:\*|(?:\*\.)?[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?)*)(?::(?:[0-9]{1,5}|\*))?(?:/[A-Za-z0-9\-._~!$&()*+=:@%/]*)?\z#iD';
 
     public static function isValid(string $source): bool
     {

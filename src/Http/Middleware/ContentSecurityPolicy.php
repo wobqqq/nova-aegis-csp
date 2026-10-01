@@ -26,8 +26,8 @@ final readonly class ContentSecurityPolicy
 
         try {
             $header = $this->csp->header($request);
-        } catch (Throwable $e) {
-            report($e);
+        } catch (Throwable $throwable) {
+            report($throwable);
 
             return $response;
         }

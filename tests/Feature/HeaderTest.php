@@ -98,7 +98,7 @@ it('applies the saved settings at once', function (): void {
 it('skips empty directives and sends nothing for an empty policy', function (): void {
     $empty = [];
 
-    foreach (array_keys((new CspModule())->defaults()) as $key) {
+    foreach (array_keys(new CspModule()->defaults()) as $key) {
         if (str_starts_with($key, 'site_')) {
             $empty[$key] = [];
         }
@@ -157,36 +157,43 @@ it('falls back to a safe reading of a stored target and flags', function (): voi
 
 it('keeps answering when the settings cannot be read', function (): void {
     Aegis::module(new class () implements Module {
+        #[Override]
         public function key(): string
         {
             return CspModule::KEY;
         }
 
+        #[Override]
         public function label(): string
         {
             return 'Broken';
         }
 
+        #[Override]
         public function description(): string
         {
             return '';
         }
 
+        #[Override]
         public function defaults(): array
         {
             throw new RuntimeException('broken');
         }
 
+        #[Override]
         public function rules(): array
         {
             return [];
         }
 
+        #[Override]
         public function fields(): array
         {
             return [];
         }
 
+        #[Override]
         public function status(array $values): ?CheckResult
         {
             return null;

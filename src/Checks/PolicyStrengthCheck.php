@@ -4,34 +4,38 @@ declare(strict_types=1);
 
 namespace Wobqqq\AegisCsp\Checks;
 
+use Override;
 use Wobqqq\Aegis\Checks\CheckResult;
 use Wobqqq\Aegis\Contracts\Check;
 use Wobqqq\AegisCsp\CspService;
 use Wobqqq\AegisCsp\Enums\Directive;
 use Wobqqq\AegisCsp\Enums\Scope;
 use Wobqqq\AegisCsp\Policy\CspSettings;
+use Wobqqq\AegisCsp\Policy\Header;
 use Wobqqq\AegisCsp\Policy\Source;
+use Wobqqq\AegisCsp\Support\Message;
 
 /**
  * How much of the site's policy actually stops an injected script.
  */
 final readonly class PolicyStrengthCheck implements Check
 {
-    public const KEY = 'csp-strength';
+    public const string KEY = 'csp-strength';
 
-    private const WEAK_SCRIPT_SOURCES = [Source::UNSAFE_INLINE, Source::UNSAFE_EVAL, '*', 'https:', 'http:', 'data:'];
+    private const array WEAK_SCRIPT_SOURCES = [Source::UNSAFE_INLINE, Source::UNSAFE_EVAL, '*', 'https:', 'http:', 'data:'];
 
     public function __construct(private CspService $csp)
     {
     }
 
+    #[Override]
     public function run(): CheckResult
     {
         $settings = $this->csp->settings();
-        $label = (string)__('aegis-csp::csp.check.label');
+        $label = Message::get('aegis-csp::csp.check.label');
 
-        if (!$settings->header(Scope::SITE) instanceof \Wobqqq\AegisCsp\Policy\Header) {
-            return CheckResult::info(self::KEY, $label, (string)__('aegis-csp::csp.check.not_sent'));
+        if (!$settings->header(Scope::SITE) instanceof Header) {
+            return CheckResult::info(self::KEY, $label, Message::get('aegis-csp::csp.check.not_sent'));
         }
 
         $weaknesses = [];
@@ -39,23 +43,23 @@ final readonly class PolicyStrengthCheck implements Check
         $weak = array_values(array_intersect($scripts, self::WEAK_SCRIPT_SOURCES));
 
         if ($weak !== []) {
-            $weaknesses[] = (string)__('aegis-csp::csp.check.weak_scripts', ['sources' => implode(' ', $weak)]);
+            $weaknesses[] = Message::get('aegis-csp::csp.check.weak_scripts', ['sources' => implode(' ', $weak)]);
         }
 
         if ($this->effective($settings, Directive::OBJECT_SRC) !== [Source::NONE]) {
-            $weaknesses[] = (string)__('aegis-csp::csp.check.objects');
+            $weaknesses[] = Message::get('aegis-csp::csp.check.objects');
         }
 
         if ($settings->sources(Scope::SITE, Directive::BASE_URI) === []) {
-            $weaknesses[] = (string)__('aegis-csp::csp.check.base_uri');
+            $weaknesses[] = Message::get('aegis-csp::csp.check.base_uri');
         }
 
         if ($settings->sources(Scope::SITE, Directive::FRAME_ANCESTORS) === []) {
-            $weaknesses[] = (string)__('aegis-csp::csp.check.frame_ancestors');
+            $weaknesses[] = Message::get('aegis-csp::csp.check.frame_ancestors');
         }
 
         if ($weaknesses === []) {
-            return CheckResult::pass(self::KEY, $label, (string)__('aegis-csp::csp.check.pass'));
+            return CheckResult::pass(self::KEY, $label, Message::get('aegis-csp::csp.check.pass'));
         }
 
         return CheckResult::warn(self::KEY, $label, implode(' ', $weaknesses));

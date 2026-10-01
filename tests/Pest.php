@@ -37,7 +37,7 @@ function sources(string ...$sources): array
  */
 function saveCsp(array $values): array
 {
-    return Aegis::save(CspModule::KEY, array_replace((new CspModule())->defaults(), $values));
+    return Aegis::save(CspModule::KEY, array_replace(new CspModule()->defaults(), $values));
 }
 
 /**

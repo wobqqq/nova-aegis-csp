@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Validation\ValidationException;
 use Wobqqq\Aegis\Aegis;
 use Wobqqq\Aegis\Enums\FieldType;
+use Wobqqq\Aegis\Settings\Field;
 use Wobqqq\AegisCsp\CspModule;
 
 use function Pest\Laravel\actingAs;
@@ -13,12 +14,12 @@ use function Pest\Laravel\putJson;
 
 it('registers its section with the core, off by default', function (): void {
     expect(Aegis::settings(CspModule::KEY))->toMatchArray(['enabled' => false, 'report_only' => false, 'apply_to' => 'site'])
-        ->and(Aegis::settings(CspModule::KEY)['nova_script_src'])->toBe(sources("'self'", "'unsafe-inline'", "'unsafe-eval'"));
+        ->and(Aegis::settings(CspModule::KEY)['nova_script_src'] ?? null)->toBe(sources("'self'", "'unsafe-inline'", "'unsafe-eval'"));
 });
 
 it('describes a field for every setting', function (): void {
     $module = new CspModule();
-    $names = array_map(static fn (Wobqqq\Aegis\Settings\Field $field): string => $field->name, $module->fields());
+    $names = array_map(static fn (Field $field): string => $field->name, $module->fields());
 
     expect($names)->toEqualCanonicalizing(array_keys($module->defaults()))
         ->and(array_keys($module->defaults()))->toEqualCanonicalizing(array_keys(array_filter(
@@ -40,7 +41,7 @@ it('saves a valid policy', function (): void {
     ]);
 
     expect($saved)->toMatchArray(['enabled' => true, 'apply_to' => 'both', 'report_uri' => '/csp-report'])
-        ->and(Aegis::settings(CspModule::KEY)['site_script_src'])->toHaveCount(3);
+        ->and(Aegis::settings(CspModule::KEY)['site_script_src'] ?? null)->toHaveCount(3);
 });
 
 it('refuses a value that could add a directive or break the header', function (array $values): void {
@@ -67,8 +68,8 @@ it('refuses a Nova policy Nova cannot work with', function (string $key, array $
 
     try {
         saveCsp([$key => $rows]);
-    } catch (ValidationException $e) {
-        $errors = $e->errors();
+    } catch (ValidationException $validationException) {
+        $errors = $validationException->errors();
     }
 
     expect($errors)->toHaveKey($key)
@@ -84,13 +85,13 @@ it('refuses a Nova policy Nova cannot work with', function (string $key, array $
 it('lets the site policy be as strict as the administrator wants', function (): void {
     saveCsp(['site_script_src' => sources("'self'"), 'site_style_src' => sources("'self'"), 'site_connect_src' => sources("'none'")]);
 
-    expect(Aegis::settings(CspModule::KEY)['site_connect_src'])->toBe(sources("'none'"));
+    expect(Aegis::settings(CspModule::KEY)['site_connect_src'] ?? null)->toBe(sources("'none'"));
 });
 
 it('saves through the Aegis page and shows the errors per row', function (): void {
     actingAs(admin());
 
-    $values = array_replace((new CspModule())->defaults(), ['enabled' => true, 'site_script_src' => sources("'self'", 'bad source')]);
+    $values = array_replace(new CspModule()->defaults(), ['enabled' => true, 'site_script_src' => sources("'self'", 'bad source')]);
 
     putJson('/nova-vendor/aegis/settings/csp', ['values' => $values])
         ->assertUnprocessable()
@@ -108,5 +109,5 @@ it('keeps the section away from users the gate refuses', function (): void {
 
     putJson('/nova-vendor/aegis/settings/csp', ['values' => ['enabled' => true]])->assertForbidden();
 
-    expect(Aegis::settings(CspModule::KEY)['enabled'])->toBeFalse();
+    expect(Aegis::settings(CspModule::KEY)['enabled'] ?? null)->toBeFalse();
 });
