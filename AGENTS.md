@@ -25,7 +25,7 @@ make ready          # all of the above
 
 `make ready` must pass. PHPStan runs at `level: max` with strict rules and **no baseline**: fix the type, never add an ignore. Advisories from `composer audit` are fixed by updating the package, never ignored.
 
-Installing Nova needs a license: `auth.json` (gitignored and export-ignored) holds the credentials. Never read, print or commit it.
+No Nova license is needed: `laravel/nova` resolves to the test double in `stubs/nova` (see *Tests*). `make test.nova` runs the suite on the real Nova and is the only command that needs a license, read from `auth.json` (gitignored and export-ignored). Never read, print or commit it.
 
 ## How the code is laid out
 
@@ -40,6 +40,7 @@ Installing Nova needs a license: `auth.json` (gitignored and export-ignored) hol
 | `src/Checks/PolicyStrengthCheck.php` | Warns about a site policy that still lets an injected script run. |
 | `src/Console/DisableCommand.php` | `aegis:csp:disable [--nova]`, the way back. |
 | `resources/lang/en/csp.php` | Every label and message, under `aegis-csp::csp.*`. |
+| `stubs/nova/` | The Nova test double the suite and PHPStan run on, a copy of the core's (export-ignored). |
 
 ### How it uses the core (its contract)
 
@@ -90,7 +91,9 @@ Recovery from the console:
 
 ## Tests
 
-Pest 4 on Orchestra Testbench 10 with the real `laravel/nova` and the Aegis core (SQLite in memory, array cache). `tests/TestCase.php` boots Inertia, Nova, the core and the module, registers `AegisTool`, defines `viewAegis` and the routes the header tests call (site, Nova, streamed, file, outside the `web` group). No test reaches the network. Read the `package-testing` skill.
+Pest 4 on Orchestra Testbench 10 with the Aegis core (SQLite in memory, array cache). `tests/TestCase.php` boots Inertia, Nova, the core and the module, registers `AegisTool`, defines `viewAegis` and the routes the header tests call (site, Nova, streamed, file, outside the `web` group). No test reaches the network. Read the `package-testing` skill.
+
+`laravel/nova` is the test double in `stubs/nova`: a path repository (`"versions": {"laravel/nova": "5.99.0"}`, symlinked) declared in `composer.json`, so `make install`, CI and PHPStan need no license; the `require` stays `laravel/nova: ^5.0`, and applications get the real Nova because a dependency's repositories are ignored. It is a verbatim copy of the core's `stubs/nova`, our own minimal code with Nova's class names and public signatures, never Nova's. When the module starts using another Nova API, add it to the core's double first (with the real signature, read in a Nova install), copy the core's `stubs/nova` here unchanged, and check it with `make test.nova` when you have a license.
 
 ## Git workflow
 
