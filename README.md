@@ -30,13 +30,29 @@ It is a module of [Aegis](https://github.com/wobqqq/nova-aegis), the security su
 
 ## 📥 Installation
 
+### 1. Install the package
+
 ```bash
 composer require wobqqq/nova-aegis-csp
 ```
 
-The service provider is discovered automatically and the settings live in the core's `aegis_settings` table, so there is nothing to publish and no migration of its own (run `php artisan migrate` once for the core if you have not yet).
+The service provider is discovered automatically.
 
-Then open **Aegis → Settings → Content Security Policy** in Nova, check the directives, choose where to send the policy and switch **Send the Content-Security-Policy header** on.
+### 2. Run the migrations
+
+```bash
+php artisan migrate
+```
+
+This creates the Aegis settings table if the core is new to the application; the module adds no table of its own.
+
+### 3. Set up Aegis (once per application)
+
+If Aegis is new to the application, register its tool and define the `viewAegis` gate as the [Aegis README](https://github.com/wobqqq/nova-aegis#-installation) describes. Skip this step if you already use another Aegis module.
+
+### 4. Turn it on in Nova
+
+Open **Aegis → Settings → Content Security Policy** in Nova, check the directives, choose where the policy is sent (the site, Nova or both), switch **Send the Content-Security-Policy header** on and save. Watch the browser console for blocked resources.
 
 ## ⚙️ Configuration
 
