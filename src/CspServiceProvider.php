@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Wobqqq\AegisCsp;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Wobqqq\Aegis\Aegis;
 use Wobqqq\Aegis\Events\SettingsSaved;
 use Wobqqq\AegisCsp\Checks\PolicyStrengthCheck;
+use Wobqqq\AegisCsp\Console\DisableCommand;
+use Wobqqq\AegisCsp\Http\Middleware\ContentSecurityPolicy;
 
 final class CspServiceProvider extends ServiceProvider
 {
@@ -17,7 +20,7 @@ final class CspServiceProvider extends ServiceProvider
         $this->app->singleton(CspService::class);
     }
 
-    public function boot(Dispatcher $events): void
+    public function boot(Router $router, Dispatcher $events): void
     {
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'aegis-csp');
 
@@ -29,5 +32,11 @@ final class CspServiceProvider extends ServiceProvider
                 $this->app->make(CspService::class)->forget();
             }
         });
+
+        $router->pushMiddlewareToGroup('web', ContentSecurityPolicy::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([DisableCommand::class]);
+        }
     }
 }
