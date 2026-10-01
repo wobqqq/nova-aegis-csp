@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Wobqqq\Aegis\Checks\CheckResult;
 use Wobqqq\Aegis\Enums\Status;
 use Wobqqq\AegisCsp\Checks\PolicyStrengthCheck;
 use Wobqqq\AegisCsp\CspModule;
@@ -9,14 +10,14 @@ use Wobqqq\AegisCsp\CspModule;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
 
-function strength(): Wobqqq\Aegis\Checks\CheckResult
+function strength(): CheckResult
 {
     return resolve(PolicyStrengthCheck::class)->run();
 }
 
 it('adds its line to the dashboard', function (array $values, Status $status, string $message): void {
     /** @var array<string, mixed> $values */
-    $result = (new CspModule())->status(array_replace((new CspModule())->defaults(), $values));
+    $result = new CspModule()->status(array_replace(new CspModule()->defaults(), $values));
 
     expect($result->status)->toBe($status)->and($result->message)->toContain($message);
 })->with([

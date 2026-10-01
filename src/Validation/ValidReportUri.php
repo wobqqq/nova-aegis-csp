@@ -6,10 +6,12 @@ namespace Wobqqq\AegisCsp\Validation;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Override;
 use Wobqqq\AegisCsp\Policy\ReportUri;
 
 final class ValidReportUri implements ValidationRule
 {
+    #[Override]
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (!is_string($value) || !ReportUri::isValid($value)) {

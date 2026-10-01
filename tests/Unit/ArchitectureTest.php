@@ -1,6 +1,15 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Wobqqq\Aegis\Checks\CheckRegistry;
+use Wobqqq\Aegis\Checks\CheckRunner;
+use Wobqqq\Aegis\Settings\AegisSetting;
+use Wobqqq\Aegis\Settings\SettingsRepository;
+use Wobqqq\AegisCsp\Policy\CspSettings;
+use Wobqqq\AegisCsp\Policy\Header;
 
 arch('every file declares strict types')
     ->expect('Wobqqq\AegisCsp')
@@ -16,7 +25,7 @@ arch('no debugging calls are left behind')
     ->not->toBeUsed();
 
 arch('value objects are immutable')
-    ->expect([Wobqqq\AegisCsp\Policy\CspSettings::class, Wobqqq\AegisCsp\Policy\Header::class])
+    ->expect([CspSettings::class, Header::class])
     ->toBeFinal()
     ->toBeReadonly();
 
@@ -26,12 +35,12 @@ arch('enums back every shared code')
 
 arch('the module never queries the database itself')
     ->expect('Wobqqq\AegisCsp')
-    ->not->toUse([Illuminate\Support\Facades\DB::class, Illuminate\Database\Eloquent\Model::class, Wobqqq\Aegis\Settings\AegisSetting::class]);
+    ->not->toUse([DB::class, Model::class, AegisSetting::class]);
 
 arch('the module reaches the core only through its public API')
     ->expect('Wobqqq\\AegisCsp')
-    ->not->toUse([Wobqqq\Aegis\Settings\SettingsRepository::class, 'Wobqqq\\Aegis\\Modules', Wobqqq\Aegis\Checks\CheckRegistry::class, Wobqqq\Aegis\Checks\CheckRunner::class]);
+    ->not->toUse([SettingsRepository::class, 'Wobqqq\\Aegis\\Modules', CheckRegistry::class, CheckRunner::class]);
 
 arch('the module opens no network connection')
-    ->expect(['stream_socket_client', 'fsockopen', 'curl_init', 'file_get_contents', Illuminate\Support\Facades\Http::class])
+    ->expect(['stream_socket_client', 'fsockopen', 'curl_init', 'file_get_contents', Http::class])
     ->not->toBeUsedIn('Wobqqq\AegisCsp');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wobqqq\AegisCsp;
 
 use Illuminate\Validation\Rule;
+use Override;
 use Wobqqq\Aegis\Checks\CheckResult;
 use Wobqqq\Aegis\Contracts\Module;
 use Wobqqq\Aegis\Settings\Field;
@@ -13,20 +14,21 @@ use Wobqqq\AegisCsp\Enums\Scope;
 use Wobqqq\AegisCsp\Enums\Target;
 use Wobqqq\AegisCsp\Policy\CspSettings;
 use Wobqqq\AegisCsp\Policy\Source;
+use Wobqqq\AegisCsp\Support\Message;
 use Wobqqq\AegisCsp\Validation\ValidReportUri;
 use Wobqqq\AegisCsp\Validation\ValidSource;
 use Wobqqq\AegisCsp\Validation\ValidSourceList;
 
 final class CspModule implements Module
 {
-    public const KEY = 'csp';
+    public const string KEY = 'csp';
 
-    public const MAX_SOURCES = 50;
+    public const int MAX_SOURCES = 50;
 
     /**
      * Loose enough that a typical site keeps working when the policy is switched on.
      */
-    private const SITE = [
+    private const array SITE = [
         'default-src' => [Source::SELF],
         'script-src' => [Source::SELF, Source::UNSAFE_INLINE, 'https:'],
         'style-src' => [Source::SELF, Source::UNSAFE_INLINE, 'https:'],
@@ -41,7 +43,7 @@ final class CspModule implements Module
         'frame-ancestors' => [Source::NONE],
     ];
 
-    private const NOVA = [
+    private const array NOVA = [
         'default-src' => [Source::SELF],
         'script-src' => [Source::SELF, Source::UNSAFE_INLINE, Source::UNSAFE_EVAL],
         'style-src' => [Source::SELF, Source::UNSAFE_INLINE],
@@ -56,21 +58,25 @@ final class CspModule implements Module
         'frame-ancestors' => [Source::SELF],
     ];
 
+    #[Override]
     public function key(): string
     {
         return self::KEY;
     }
 
+    #[Override]
     public function label(): string
     {
-        return (string)__('aegis-csp::csp.label');
+        return Message::get('aegis-csp::csp.label');
     }
 
+    #[Override]
     public function description(): string
     {
-        return (string)__('aegis-csp::csp.description');
+        return Message::get('aegis-csp::csp.description');
     }
 
+    #[Override]
     public function defaults(): array
     {
         $values = [
@@ -92,6 +98,7 @@ final class CspModule implements Module
         return $values;
     }
 
+    #[Override]
     public function rules(): array
     {
         $rules = [
@@ -114,10 +121,11 @@ final class CspModule implements Module
         return $rules;
     }
 
+    #[Override]
     public function fields(): array
     {
-        $field = static fn (string $name): string => (string)__('aegis-csp::csp.fields.' . $name);
-        $help = static fn (string $name): string => (string)__('aegis-csp::csp.help.' . $name);
+        $field = static fn (string $name): string => Message::get('aegis-csp::csp.fields.' . $name);
+        $help = static fn (string $name): string => Message::get('aegis-csp::csp.help.' . $name);
         $column = [Field::text('source', $field('source'), placeholder: "'self'")];
 
         $fields = [
@@ -135,7 +143,7 @@ final class CspModule implements Module
             foreach (Directive::cases() as $directive) {
                 $fields[] = Field::table(
                     $directive->setting($scope),
-                    (string)__('aegis-csp::csp.fields.directive_' . $scope->value, ['directive' => $directive->value]),
+                    Message::get('aegis-csp::csp.fields.directive_' . $scope->value, ['directive' => $directive->value]),
                     $column,
                     $directive === Directive::DEFAULT_SRC ? $help('directives_' . $scope->value) : '',
                 );
@@ -145,19 +153,20 @@ final class CspModule implements Module
         return $fields;
     }
 
+    #[Override]
     public function status(array $values): CheckResult
     {
         $settings = CspSettings::fromArray($values);
         $label = $this->label();
 
         if (!$settings->enabled) {
-            return CheckResult::warn(self::KEY, $label, (string)__('aegis-csp::csp.status.off'));
+            return CheckResult::warn(self::KEY, $label, Message::get('aegis-csp::csp.status.off'));
         }
 
-        $where = (string)__('aegis-csp::csp.status.target_' . $settings->target->value);
+        $where = Message::get('aegis-csp::csp.status.target_' . $settings->target->value);
 
         return $settings->reportOnly
-            ? CheckResult::warn(self::KEY, $label, (string)__('aegis-csp::csp.status.report_only', ['target' => $where]))
-            : CheckResult::pass(self::KEY, $label, (string)__('aegis-csp::csp.status.on', ['target' => $where]));
+            ? CheckResult::warn(self::KEY, $label, Message::get('aegis-csp::csp.status.report_only', ['target' => $where]))
+            : CheckResult::pass(self::KEY, $label, Message::get('aegis-csp::csp.status.on', ['target' => $where]));
     }
 }
