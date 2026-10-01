@@ -4,7 +4,7 @@ Guidance for coding agents working in this repository.
 
 ## What this is
 
-**Aegis CSP** (`wobqqq/nova-aegis-csp`) is a module of the Aegis security suite for Laravel Nova (Laravel 12, PHP 8.2+). It sends a `Content-Security-Policy` header (or `Content-Security-Policy-Report-Only`) built from per-directive source lists the administrator edits in **Aegis → Settings → Content Security Policy**, to the site, to the Nova panel or to both, each with its own policy.
+**Aegis CSP** (`wobqqq/nova-aegis-csp`) is a module of the Aegis security suite for Laravel Nova (Laravel 12 or 13, PHP 8.2+). It sends a `Content-Security-Policy` header (or `Content-Security-Policy-Report-Only`) built from per-directive source lists the administrator edits in **Aegis → Settings → Content Security Policy**, to the site, to the Nova panel or to both, each with its own policy.
 
 It requires the core package [`wobqqq/nova-aegis`](https://github.com/wobqqq/nova-aegis): the module registers its settings section, its dashboard line and a check through the core's public API, and the core stores, validates, caches and draws the settings.
 
