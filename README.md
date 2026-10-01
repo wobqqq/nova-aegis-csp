@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/wobqqq/nova-aegis-csp/actions/workflows/ci.yml/badge.svg)](https://github.com/wobqqq/nova-aegis-csp/actions/workflows/ci.yml)
 [![Packagist](https://img.shields.io/packagist/v/wobqqq/nova-aegis-csp)](https://packagist.org/packages/wobqqq/nova-aegis-csp)
-[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://github.com/wobqqq/nova-aegis-csp/blob/main/composer.json)
+[![PHP](https://img.shields.io/badge/PHP-8.4%2B-777bb4)](https://github.com/wobqqq/nova-aegis-csp/blob/main/composer.json)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%20max-brightgreen)](https://github.com/wobqqq/nova-aegis-csp/blob/main/phpstan.neon.dist)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/wobqqq/nova-aegis-csp/blob/main/LICENSE.md)
 
@@ -23,7 +23,7 @@ It is a module of [Aegis](https://github.com/wobqqq/nova-aegis), the security su
 
 ## 📦 Requirements
 
-- PHP 8.2 or higher
+- PHP 8.4 or higher
 - Laravel 12 or 13
 - Laravel Nova 5
 - [Aegis](https://github.com/wobqqq/nova-aegis) 1.1 or higher (`wobqqq/nova-aegis`), installed and its tool registered
