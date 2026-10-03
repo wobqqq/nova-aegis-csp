@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Wobqqq\AegisCsp;
 
-use Illuminate\Http\Request;
-use Laravel\Nova\Util;
 use Wobqqq\Aegis\Aegis;
 use Wobqqq\AegisCsp\Enums\Scope;
 use Wobqqq\AegisCsp\Policy\CspSettings;
@@ -23,10 +21,8 @@ final class CspService
         return $this->settings ??= CspSettings::fromArray(Aegis::settings(CspModule::KEY));
     }
 
-    public function header(Request $request): ?Header
+    public function header(Scope $scope): ?Header
     {
-        $scope = Util::isNovaRequest($request) ? Scope::NOVA : Scope::SITE;
-
         if (!array_key_exists($scope->value, $this->headers)) {
             $this->headers[$scope->value] = $this->settings()->header($scope);
         }
