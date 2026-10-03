@@ -4,6 +4,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-03
+
 ### Changed
 
 - Internal refactoring along the architecture skills, no change for applications: `CspService::header()` takes the scope the middleware picks instead of the request, and the disable command calls `TurnOffCsp`.
@@ -41,7 +43,8 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 - `aegis:csp:disable [--nova]` console command.
 - Requires Aegis 1.1 or later (`wobqqq/nova-aegis` `^1.1`): the module uses only the core's public API, `Aegis::save()` included.
 
-[Unreleased]: https://github.com/wobqqq/nova-aegis-csp/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/wobqqq/nova-aegis-csp/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/wobqqq/nova-aegis-csp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/wobqqq/nova-aegis-csp/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/wobqqq/nova-aegis-csp/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wobqqq/nova-aegis-csp/releases/tag/v1.0.0
