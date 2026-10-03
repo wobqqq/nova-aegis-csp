@@ -33,12 +33,13 @@ No Nova license is needed: `laravel/nova` resolves to the test double in `stubs/
 |------|-------|
 | `src/CspServiceProvider.php` | Wiring only: the module and the check with `Aegis::module()` / `Aegis::check()`, the `SettingsSaved` listener, the middleware in the `web` group, the command. |
 | `src/CspModule.php` | The `csp` section: defaults (the site and Nova policies), rules, fields, the dashboard line. |
-| `src/CspService.php` | The settings read once per process (`settings()`), the header for a request (`header()`), `forget()`. |
+| `src/CspService.php` | The settings read once per process (`settings()`), the header of a scope (`header(Scope)`), `forget()`. |
 | `src/Policy/` | `Source` (the one rule every source must match), `ReportUri`, `NovaAllowances` (what Nova cannot work without), `CspSettings` (the settings re-read and the header built), `Header`. |
 | `src/Validation/` | The rules the settings form runs: `ValidSource` per row, `ValidSourceList` per directive, `ValidReportUri`. |
-| `src/Http/Middleware/ContentSecurityPolicy.php` | Sets the header on every response of the `web` group. |
+| `src/Http/Middleware/ContentSecurityPolicy.php` | Picks the scope (Nova or the site) and sets the header on every response of the `web` group. |
 | `src/Checks/PolicyStrengthCheck.php` | Warns about a site policy that still lets an injected script run. |
-| `src/Console/DisableCommand.php` | `aegis:csp:disable [--nova]`, the way back. |
+| `src/Console/DisableCommand.php` | `aegis:csp:disable [--nova]`, the way back: it reads the option and calls `Actions\TurnOffCsp`. |
+| `src/Actions/TurnOffCsp.php` | `everywhere()` and `forNova()`, the recovery saves. |
 | `resources/lang/en/csp.php` | Every label and message, under `aegis-csp::csp.*`. |
 | `stubs/nova/` | The Nova test double the suite and PHPStan run on, a copy of the core's (export-ignored). |
 
@@ -62,6 +63,20 @@ A newer core API is used only behind a check (`method_exists`, `class_exists`) w
 2. `CspService::header()` decides the scope with Nova's `Util::isNovaRequest()` (the Nova path, `nova-api/*`, `nova-vendor/*`, or Nova's own domain), then returns the memoized `Header` of that scope, or null when the policy is off, the target does not cover the scope or no directive is left.
 3. The settings come from `Aegis::settings('csp')`, cached by the core: **no database query per request.** The memo is cleared on `SettingsSaved` for `csp`.
 4. Any failure is reported and the response goes out without the header.
+
+## Architecture
+
+The architecture skills in `.claude/skills/` are the rules for how code is shaped; read the one that matches the change before writing it:
+
+- `application-layer`: entry points (middleware, controllers, console commands, the module's Nova pieces) only translate input and output; the work sits in classes named after what they do, with typed input.
+- `dependency-injection`: collaborators and configuration arrive through the constructor; facades stay in entry points; interfaces only at I/O boundaries (HTTP, sockets, the clock, processes).
+- `error-handling`, `validation`: failures are typed exceptions, never `null` or `false`; input shape is validated at the entry point, business rules where the work is done.
+- `events`: reactions run after the commit, from events that say what happened.
+- `testing-architecture`: unit tests for pure logic, feature tests for use cases, fakes only at boundaries.
+- `domain-layer-cqrs`: when (rarely) a separate domain layer or read side pays off.
+- `package-boundaries`: what is public API here and how it may change.
+
+In this module: the middleware decides the scope and sets the header, `CspService` never sees the request; the disable command reads its option and calls `Actions\TurnOffCsp`.
 
 ## Upgrading installed applications safely
 
